@@ -1,0 +1,3 @@
+var GAME_HEIGHT = 500;
+var GAME_WIDTH = 800;
+var DEFAULT_SPEED = 300;
