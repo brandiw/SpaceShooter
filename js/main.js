@@ -2,14 +2,18 @@ var game = new Phaser.Game(GAME_WIDTH, GAME_HEIGHT, Phaser.AUTO, "game",
   {init:init, preload:preload, create:create, update:update});
 var bg;
 var player;
-var cursors;
-var laserTimer = 0;
-var enemies, lasers, explosions;
-var scoreText, hpText;
-var pewpew, kaboom;
+var cursors; //keyboard input
+var enemies, lasers, explosions, nukes; //fighting/shooting
+var scoreText, hpText; //text
+var pewpew, kaboom, nukeboom; //sounds
+var weaponTimer = 0, switchTimer = 0; //delay firing time
+var currentWeapon = 0; //current weapon index
+var nextEnemyFire = 2;
+var level = 1;
 
 function init(){
   this.enterKeyUp = true;
+  displayHighScores();
 }
 
 function preload(){
@@ -23,11 +27,13 @@ function preload(){
   game.load.image('enemy1', '../assets/img/enemy1.png');
   game.load.image('enemy2', '../assets/img/enemy2.png');
   game.load.image('fireball', '../assets/img/Fireball.png');
-  game.load.spritesheet('boom', '..assets/img/explode.png', 128, 128);
+  game.load.spritesheet('boom', '../assets/img/explode.png', 128, 128);
   game.load.spritesheet('smallboom', '../assets/img/explosion.png', 64, 64);
 
   game.load.audio('pewpew', ['../assets/audio/laser.mp3', 'assets/laser.ogg']);
+  game.load.audio('nukelaunch', ['../assets/audio/Missile.mp3']);
   game.load.audio('kaboom', ['../assets/audio/explosion.mp3', 'assets/explosion.ogg']);
+  game.load.audio('nukeboom', ['../assets/audio/ExplosionNuke.mp3']);
 }
 
 function create(){
@@ -47,27 +53,45 @@ function create(){
   lasers = game.add.group();
   lasers.enableBody = true;
   lasers.physicsBodyType = Phaser.Physics.ARCADE;
-  lasers.createMultiple(30, 'laser');
+  lasers.createMultiple(20, 'laser');
   lasers.setAll('anchor.x', 0.5);
   lasers.setAll('anchor.y', 1);
   lasers.setAll('outOfBoundsKill', true);
   lasers.setAll('checkWorldBounds', true);
 
+  // Create missle objects for shooting
+  missiles = game.add.group();
+  missiles.enableBody = true;
+  missiles.physicsBodyType = Phaser.Physics.ARCADE;
+  missiles.createMultiple(20, 'missile');
+  missiles.setAll('anchor.x', 0.5);
+  missiles.setAll('anchor.y', 1);
+  missiles.setAll('outOfBoundsKill', true);
+  missiles.setAll('checkWorldBounds', true);
+
   // Create enemy objects, destroy when they leave the screen
   enemies = game.add.group();
   enemies.enableBody = true;
   enemies.physicsBodyType = Phaser.Physics.ARCADE;
-  enemies.createMultiple(30, 'enemy');
+  enemies.createMultiple(50, 'enemy');
   enemies.setAll('outOfBoundsKill', true);
   enemies.setAll('checkWorldBounds', true);
 
   // Create explosion objects and their animations
   explosions = game.add.group();
-  explosions.createMultiple(20, 'smallboom');
+  explosions.createMultiple(30, 'smallboom');
   explosions.setAll('anchor.x', 0.5);
   explosions.setAll('anchor.y', 0.5);
   explosions.forEach(function(explosion){
     explosion.animations.add('smallboom');
+  }, this);
+
+  nukes = game.add.group();
+  nukes.createMultiple(20, 'boom');
+  nukes.setAll('anchor.x', 0.5);
+  nukes.setAll('anchor.y', 0.5);
+  nukes.forEach(function(nuke){
+    nuke.animations.add('boom');
   }, this);
 
   // Keyboard
@@ -77,13 +101,15 @@ function create(){
   // Sounds
   pewpew = game.add.audio('pewpew', 0.4, false);
   kaboom = game.add.audio('kaboom', 0.9, false);
+  nukeboom = game.add.audio('nukeboom', 0.9, false);
+  nukelaunch = game.add.audio('nukelaunch', 0.6, false);
 
   // Text
   scoreText = game.add.text(GAME_WIDTH - 180, 460,'Score: 0', {fill: '#fff'});
   hpText = game.add.text(GAME_WIDTH - 180, 20,'HP: ' + player.life.toString(), {fill: '#fff'});
 
   // Spawn Enemies!
-  game.time.events.loop(Phaser.Timer.SECOND * 2, spawnEnemy, this);
+  //game.time.events.loop(Phaser.Timer.SECOND * 2, spawnEnemy, this);
 }
 
 function update(){
@@ -103,13 +129,24 @@ function update(){
   }
 
   if(game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR)){
-    fireLaser();
+    fireWeapon();
   }
   if(game.input.keyboard.isDown(Phaser.Keyboard.ENTER)){
     switchWeapon();
   }
 
+  if(level * LEVEL_INCREMENT < player.score){
+    level++;
+    console.log('incrementing level', level);
+  }
+
+  if(nextEnemyFire <= game.time.totalElapsedSeconds()){
+    launchRandomlySpacedEnemies();
+    nextEnemyFire += Math.floor(Math.random() * 0.5) + 0.5;
+  }
+
   //Collision detection
   game.physics.arcade.overlap(lasers, enemies, hitEnemy, null, this);
+  game.physics.arcade.overlap(missiles, enemies, nukeEnemy, null, this);
   game.physics.arcade.overlap(player, enemies, selfDamage, null, this);
 }
