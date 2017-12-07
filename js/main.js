@@ -1,6 +1,6 @@
 var game = new Phaser.Game(GAME_WIDTH, GAME_HEIGHT, Phaser.AUTO, "game",
   {init:init, preload:preload, create:create, update:update});
-var bg;
+var bg, music;
 var player;
 var cursors; //keyboard input
 var enemies, lasers, explosions, nukes; //fighting/shooting
@@ -34,12 +34,21 @@ function preload(){
   game.load.audio('nukelaunch', ['../assets/audio/Missile.mp3']);
   game.load.audio('kaboom', ['../assets/audio/explosion.mp3', 'assets/explosion.ogg']);
   game.load.audio('nukeboom', ['../assets/audio/ExplosionNuke.mp3']);
+  game.load.audio('music', ['../assets/audio/Shadelike.mp3']);
 }
 
 function create(){
   // Create the background and make it scroll
   bg = game.add.tileSprite(0, 0, this.game.width, this.game.height, 'bg');
   bg.autoScroll(-30, 0);
+
+  // Sounds
+  pewpew = game.add.audio('pewpew', 0.01, false);
+  kaboom = game.add.audio('kaboom', 0.3, false);
+  nukeboom = game.add.audio('nukeboom', 0.6, false);
+  nukelaunch = game.add.audio('nukelaunch', 0.5, false);
+  music = game.add.audio('music');
+  music.play(); //background
 
   // Create the player and place it inside the world bounds
   player = game.add.sprite(64, 200, 'player');
@@ -98,12 +107,6 @@ function create(){
   cursors = game.input.keyboard.createCursorKeys();
   game.input.keyboard.addKeyCapture([ Phaser.Keyboard.SPACEBAR, Phaser.Keyboard.ENTER ]);
 
-  // Sounds
-  pewpew = game.add.audio('pewpew', 0.4, false);
-  kaboom = game.add.audio('kaboom', 0.9, false);
-  nukeboom = game.add.audio('nukeboom', 0.9, false);
-  nukelaunch = game.add.audio('nukelaunch', 0.6, false);
-
   // Text
   scoreText = game.add.text(GAME_WIDTH - 180, 460,'Score: 0', {fill: '#fff'});
   hpText = game.add.text(GAME_WIDTH - 180, 20,'HP: ' + player.life.toString(), {fill: '#fff'});
@@ -140,7 +143,7 @@ function update(){
     console.log('incrementing level', level);
   }
 
-  if(nextEnemyFire <= game.time.totalElapsedSeconds()){
+  if(player.life > 0 && nextEnemyFire <= game.time.totalElapsedSeconds()){
     launchRandomlySpacedEnemies();
     nextEnemyFire += Math.floor(Math.random() * 0.5) + 0.5;
   }

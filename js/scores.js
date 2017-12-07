@@ -4,6 +4,7 @@ function addScore(amount){
 }
 
 function gameOver(){
+  music.pause();
   var scores = getHighScores();
 
   if(scores.length < SCORE_SLOTS || scores[SCORE_SLOTS - 1].score < player.score){
