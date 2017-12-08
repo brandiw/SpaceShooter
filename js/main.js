@@ -4,7 +4,7 @@ var bg, music;
 var player;
 var cursors; //keyboard input
 var enemies, lasers, explosions, nukes; //fighting/shooting
-var scoreText, hpText; //text
+var scoreText, hpText, levelText; //text
 var pewpew, kaboom, nukeboom; //sounds
 var weaponTimer = 0, switchTimer = 0; //delay firing time
 var currentWeapon = 0; //current weapon index
@@ -141,6 +141,8 @@ function update(){
   if(level * LEVEL_INCREMENT < player.score){
     level++;
     console.log('incrementing level', level);
+    showLevelText();
+    setTimeout(removeLevelText, 1000);
   }
 
   if(player.life > 0 && nextEnemyFire <= game.time.totalElapsedSeconds()){
