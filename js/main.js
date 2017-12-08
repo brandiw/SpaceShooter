@@ -12,7 +12,7 @@ var nextEnemyFire = 2;
 var level = 1;
 
 function init(){
-  this.enterKeyUp = true;
+  game.enterKeyUp = true;
   displayHighScores();
 }
 
