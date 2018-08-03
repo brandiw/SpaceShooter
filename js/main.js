@@ -20,21 +20,21 @@ function preload(){
   game.physics.startSystem(Phaser.Physics.ARCADE);
 
   game.load.image('bg', '/assets/img/cool-space-background.jpg')
-  game.load.image('player', './assets/img/ship.png');
-  game.load.image('laser', '../assets/img/beam.png');
-  game.load.image('missile', '../assets/img/missile.png');
-  game.load.image('enemy', '../assets/img/enemy.png');
-  game.load.image('enemy1', '../assets/img/enemy1.png');
-  game.load.image('enemy2', '../assets/img/enemy2.png');
-  game.load.image('fireball', '../assets/img/Fireball.png');
-  game.load.spritesheet('boom', '../assets/img/explode.png', 128, 128);
-  game.load.spritesheet('smallboom', '../assets/img/explosion.png', 64, 64);
+  game.load.image('player', '/assets/img/ship.png');
+  game.load.image('laser', '/assets/img/beam.png');
+  game.load.image('missile', '/assets/img/missile.png');
+  game.load.image('enemy', '/assets/img/enemy.png');
+  game.load.image('enemy1', '/assets/img/enemy1.png');
+  game.load.image('enemy2', '/assets/img/enemy2.png');
+  game.load.image('fireball', '/assets/img/Fireball.png');
+  game.load.spritesheet('boom', '/assets/img/explode.png', 128, 128);
+  game.load.spritesheet('smallboom', '/assets/img/explosion.png', 64, 64);
 
-  game.load.audio('pewpew', ['../assets/audio/laser.mp3', 'assets/laser.ogg']);
-  game.load.audio('nukelaunch', ['../assets/audio/Missile.mp3']);
-  game.load.audio('kaboom', ['../assets/audio/explosion.mp3', 'assets/explosion.ogg']);
-  game.load.audio('nukeboom', ['../assets/audio/ExplosionNuke.mp3']);
-  game.load.audio('music', ['../assets/audio/Shadelike.mp3']);
+  game.load.audio('pewpew', ['/assets/audio/laser.mp3', '/assets/laser.ogg']);
+  game.load.audio('nukelaunch', ['/assets/audio/Missile.mp3']);
+  game.load.audio('kaboom', ['../assets/audio/explosion.mp3', '/assets/explosion.ogg']);
+  game.load.audio('nukeboom', ['/assets/audio/ExplosionNuke.mp3']);
+  game.load.audio('music', ['/assets/audio/Shadelike.mp3']);
 }
 
 function create(){
