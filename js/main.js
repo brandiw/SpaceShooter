@@ -19,8 +19,8 @@ function init(){
 function preload(){
   game.physics.startSystem(Phaser.Physics.ARCADE);
 
-  game.load.image('bg', '../assets/img/cool-space-background.jpg')
-  game.load.image('player', '../assets/img/ship.png');
+  game.load.image('bg', '/assets/img/cool-space-background.jpg')
+  game.load.image('player', './assets/img/ship.png');
   game.load.image('laser', '../assets/img/beam.png');
   game.load.image('missile', '../assets/img/missile.png');
   game.load.image('enemy', '../assets/img/enemy.png');
