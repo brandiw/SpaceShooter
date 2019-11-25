@@ -1,6 +1,6 @@
 var game = new Phaser.Game(GAME_WIDTH, GAME_HEIGHT, Phaser.AUTO, "game",
   {init:init, preload:preload, create:create, update:update});
-var bg, music;
+var music;
 var player;
 var cursors; //keyboard input
 var enemies, lasers, explosions, nukes; //fighting/shooting
@@ -39,7 +39,7 @@ function preload(){
 
 function create(){
   // Create the background and make it scroll
-  bg = game.add.tileSprite(0, 0, this.game.width, this.game.height, 'bg');
+  var bg = game.add.tileSprite(0, 0, game.width, game.height, 'bg');
   bg.autoScroll(-30, 0);
 
   // Sounds
